@@ -8,10 +8,14 @@ import { BookOpen } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../Utils/Api';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export const LoginSignup = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
   const { login, signup } = useAuth();
+
+  const navigate = useNavigate();
 
   const [loginForm, setLoginForm] = useState({
     email: '',
@@ -28,52 +32,50 @@ export const LoginSignup = ({ onClose }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+    setError(false);
 
-    let userData= async function ()=>{
-      axios.post(`${api}\auth\login`)
-    }
-  
-    setTimeout(() => {
-      const userData = {
-        id: 'user-1',
-        name: loginForm.email.split('@')[0],
-        email: loginForm.email,
-        avatar: null,
-        joinDate: '2024',
-        isAuthor: false
-      };
-      
-      login(userData);
+    try {
+      const res = await axios.post(`${api}/auth/login`, loginForm);
+      console.log(res);
+      const token = res.data.token;
+      localStorage.setItem('authToken', token);
+
+      navigate('/');
+      alert("Successfully logged in");
+    } catch (error) {
+      console.log("Login failed:", error);
+      alert("Failed with error");
+      setError(true);
+    } finally {
       setIsLoading(false);
-      if (onClose) onClose();
-    }, 1000);
+    }
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    setError(false);
+
     if (signupForm.password !== signupForm.confirmPassword) {
       alert('Passwords do not match');
       return;
     }
-    
+
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      const userData = {
-        id: 'user-' + Date.now(),
-        name: signupForm.name,
-        email: signupForm.email,
-        avatar: null,
-        joinDate: new Date().getFullYear().toString(),
-        isAuthor: false
-      };
-      
-      signup(userData);
+
+    try {
+      const res = await axios.post(`${api}/auth/register`, signupForm);
+       console.log(res);
+      const token = res.data.token;
+      localStorage.setItem('authToken', token);
+
+      navigate('/');
+      alert("Successfully registered");
+    } catch (error) {
+      console.error("Registration error:", error);
+      setError(true);
+    } finally {
       setIsLoading(false);
-      if (onClose) onClose();
-    }, 1000);
+    }
   };
 
   return (
@@ -93,6 +95,7 @@ export const LoginSignup = ({ onClose }) => {
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
 
+            {/* Login Form */}
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
@@ -120,9 +123,16 @@ export const LoginSignup = ({ onClose }) => {
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? 'Signing in...' : 'Sign In'}
                 </Button>
+
+                {error && (
+                  <p className="text-red-500 text-sm mt-2">
+                    Something went wrong!
+                  </p>
+                )}
               </form>
             </TabsContent>
 
+            {/* Signup Form */}
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
@@ -172,6 +182,12 @@ export const LoginSignup = ({ onClose }) => {
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? 'Creating account...' : 'Create Account'}
                 </Button>
+
+                {error && (
+                  <p className="text-red-500 text-sm mt-2">
+                    Something went wrong!
+                  </p>
+                )}
               </form>
             </TabsContent>
           </Tabs>
