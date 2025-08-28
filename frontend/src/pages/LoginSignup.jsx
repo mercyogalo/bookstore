@@ -6,6 +6,8 @@ import { Label } from '../components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { BookOpen } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import api from '../Utils/Api';
+import { useNavigate } from 'react-router-dom';
 
 export const LoginSignup = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +29,11 @@ export const LoginSignup = ({ onClose }) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate API call
+
+    let userData= async function ()=>{
+      axios.post(`${api}\auth\login`)
+    }
+  
     setTimeout(() => {
       const userData = {
         id: 'user-1',
