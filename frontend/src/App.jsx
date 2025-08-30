@@ -13,8 +13,9 @@ import { Toaster } from "./components/ui/toaster"
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
+      
         <BrowserRouter>
+        <AuthProvider>
           <div className="min-h-screen bg-background">
             {/* Navbar will always show, except on auth page */}
             <Navbar />
@@ -32,8 +33,9 @@ function App() {
 
             <Toaster />
           </div>
+          </AuthProvider>
         </BrowserRouter>
-      </AuthProvider>
+      
     </ThemeProvider>
   )
 }

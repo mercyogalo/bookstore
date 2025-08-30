@@ -31,7 +31,7 @@ reviewerSchema.methods.matchPassword=async function(enteredPassword){
     return await bcrypt.compare(enteredPassword, this.password);
 }
 
-const Reviewer=mongoose.model('User', reviewerSchema);
+const Reviewer=mongoose.model('Reviewer', reviewerSchema);
 module.exports=Reviewer;
 
 
